@@ -1,0 +1,55 @@
+{
+    "Version": 1,
+    "UUID": "5e2bde1a-00b2-11e8-8916-8c859027cd3b",
+    "Name": "Intents",
+    "Properties": {
+        "description": "provides an application template",
+        "language": "en"
+    },
+    "PropertiesSchemaFile": "properties_schema.json",
+    "RequiresVersion": 21,
+    "DHTConfig": {
+        "HashType": "sha2-256"
+    },
+    "Zomes": [
+        {
+            "Name": "Intents",
+            "Description": "provide a sample zome",
+            "CodeFile": "intentsZome.js",
+            "Entries": [
+                {
+                    "Name": "intent",
+                    "DataFormat": "json",
+                    "Sharing": "public"
+                },
+                {
+                    "Name": "intent_link",
+                    "DataFormat": "links"
+                },
+                {
+                    "Name": "intents_anchor",
+                    "DataFormat": "string",
+                    "Sharing": "public"
+                }
+            ],
+            "RibosomeType": "js",
+            "Functions": [
+                {
+                    "Name": "intentCreate",
+                    "CallingType": "json",
+                    "Exposure": "public"
+                },
+                {
+                    "Name": "intentRead",
+                    "CallingType": "json",
+                    "Exposure": "public"
+                },
+                {
+                    "Name": "getAllIntents",
+                    "CallingType": "json",
+                    "Exposure": "public"
+                }
+            ]
+        }
+    ]
+}

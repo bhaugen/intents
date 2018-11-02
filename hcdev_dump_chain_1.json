@@ -1,0 +1,113 @@
+bob@bob-Lemur:~/intents$ hcdev dump --chain --json
+{
+    "%dna": {
+        "header": {
+            "type": "%dna",
+            "signature": "{[194 43 250 63 239 24 101 13 19 139 161 129 205 80 102 133 194 153 247 240 247 7 51 140 25 104 8 203 230 164 162 203 107 109 19 109 201 188 5 235 6 11 155 231 220 172 160 188 58 49 209 201 29 144 242 158 53 81 148 216 133 210 58 14]}",
+            "hash": "QmdcBdCFkFvd7VEuse3Eyg5kzfBPRQMJid5UEuXpMgSVyj",
+            "time": "2018-11-02 09:23:14.496212125 -0500 CDT",
+            "nextHeader": "1",
+            "next": "%dna: 1",
+            "entry": "QmZyq3r7TS6cV2sMrHDM2mHx1JGcs7zs34nTSNZPVGUyTU"
+        },
+        "content": {
+            "Version": 1,
+            "UUID": "5e2bde1a-00b2-11e8-8916-8c859027cd3b",
+            "Name": "Intents",
+            "Properties": {
+                "description": "provides an application template",
+                "language": "en"
+            },
+            "PropertiesSchema": "{\n\t\"title\": \"Properties Schema\",\n\t\"type\": \"object\",\n\t\"properties\": {\n\t\t\"description\": {\n\t\t\t\"type\": \"string\"\n\t\t},\n\t\t\"language\": {\n\t\t\t\"type\": \"string\"\n\t\t}\n\t}\n}\n",
+            "AgentIdentitySchema": "",
+            "BasedOn": {
+                "H": null
+            },
+            "RequiresVersion": 21,
+            "DHTConfig": {
+                "HashType": "sha2-256",
+                "NeighborhoodSize": 0
+            },
+            "Progenitor": {
+                "Identity": "",
+                "PubKey": null
+            },
+            "Zomes": [
+                {
+                    "Name": "Intents",
+                    "Description": "provide a sample zome",
+                    "Code": "'use strict';\n\n// EXPOSED METHODS\n\n// creates an intent entry\nfunction intentCreate (entry) {\n\n  // Commit post entry to my source chain\n  var hash = commit('intent', entry);\n\n  // On the DHT, put a link from my hash to the hash of the new post\n  var base = commit(\"intents_anchor\", \"intents_anchor\");\n  commit(\"intent_link\",{\n    Links:[\n      {Base:base, Link: hash, Tag: \"intent\"}\n    ]\n  });\n\n  // Returns the hash of the new post to the caller\n  return hash;\n}\n\n// retrieves a holoWorldEntry entry\nfunction intentRead (hash) {\n  return get(hash)\n}\n\nfunction getAllIntents () {\n    var base = commit(\"intents_anchor\", \"intents_anchor\");\n    var links = [];\n    try {\n        links = getLinks(base, 'intent', { Load: true });\n    }\n    catch (error)\n    {\n        \n    }\n    return links;\n}\n\n/**\n * Called only when your source chain is generated\n * @return {boolean} success\n */\nfunction genesis() {\n  return true;\n}\n\n// -----------------------------------------------------------------\n//  validation functions for every DHT entry change\n// -----------------------------------------------------------------\n\nfunction validateCommit (entryName, entry, header, pkg, sources) {\n  switch (entryName) {\n    case 'intent':\n      // in order for the 'commit' action to work, validateCommit (given a intent) must return true\n      // there is no special validation that we have to perform for our simple app\n      return true\n    case 'intents_anchor':\n      // in order for the 'commit' action to work, validateCommit (given a intents_anchor) must return true\n      // there is no special validation that we have to perform for our simple app\n      return true\n    case 'intent_link':\n      // in order for the 'commit' action to work, validateCommit (given a intent_link) must return true\n      // there is no special validation that we have to perform for our simple app\n      return true\n    default:\n      // invalid entry name\n      return false\n  }\n}\n\nfunction validateLink(linkEntryType, baseHash, links, pkg, sources )\n{\n  if (linkEntryType==\"intent_link\")\n    return true;\n\n  return false;\n\n}\n\nfunction validatePut (entryName, entry, header, pkg, sources) {\n  switch (entryName) {\n    case 'intent':\n      return true\n    default:\n      // invalid entry name\n      return true\n  }\n}\n\nfunction validateMod (entryName, entry, header, replaces, pkg, sources) {\n  switch (entryName) {\n    case \"sampleEntry\":\n      return false;\n    default:\n      // invalid entry name\n      return false;\n  }\n}\n\nfunction validateDel (entryName,hash, pkg, sources) {\n  switch (entryName) {\n    case \"sampleEntry\":\n      return false;\n    default:\n      // invalid entry name\n      return false;\n  }\n}\n\nfunction validatePutPkg (entryName) {\n  return null;\n}\nfunction validateModPkg (entryName) {\n  return null;\n}\nfunction validateDelPkg (entryName) {\n  return null;\n}\n",
+                    "Entries": [
+                        {
+                            "Name": "intent",
+                            "DataFormat": "json",
+                            "Sharing": "public",
+                            "Schema": ""
+                        },
+                        {
+                            "Name": "intent_link",
+                            "DataFormat": "links",
+                            "Sharing": "",
+                            "Schema": ""
+                        },
+                        {
+                            "Name": "intents_anchor",
+                            "DataFormat": "string",
+                            "Sharing": "public",
+                            "Schema": ""
+                        }
+                    ],
+                    "RibosomeType": "js",
+                    "Functions": [
+                        {
+                            "Name": "intentCreate",
+                            "CallingType": "json",
+                            "Exposure": "public"
+                        },
+                        {
+                            "Name": "intentRead",
+                            "CallingType": "json",
+                            "Exposure": "public"
+                        },
+                        {
+                            "Name": "getAllIntents",
+                            "CallingType": "json",
+                            "Exposure": "public"
+                        }
+                    ],
+                    "BridgeFuncs": null,
+                    "BridgeTo": {
+                        "H": null
+                    },
+                    "Config": null
+                }
+            ]
+        }
+    },
+    "%agent": {
+        "header": {
+            "type": "%agent",
+            "signature": "{[71 6 4 66 76 152 147 139 191 194 125 208 61 121 195 211 84 131 49 248 194 39 189 104 135 232 131 200 118 231 137 117 113 6 58 168 26 128 78 123 182 84 63 80 87 63 249 211 86 167 175 60 60 98 56 226 233 43 148 222 142 247 229 6]}",
+            "hash": "QmPySqNE8NPa3ExGb5FpLZZXW81w2SpnZ7Y2Yzu5sjSyVQ",
+            "time": "2018-11-02 09:23:14.496998691 -0500 CDT",
+            "nextHeader": "QmdcBdCFkFvd7VEuse3Eyg5kzfBPRQMJid5UEuXpMgSVyj",
+            "next": "%agent: 1",
+            "entry": "QmPZuS6B5D5B9WYu8Yi3xLpnZuZvUBKkUCVNpXCYwtpyXD"
+        },
+        "content": "{\"Identity\":\"bob@bob-Lemur\",\"Revocation\":\"\",\"PublicKey\":\"4XTTMAk7fNogW7DQKYc8bDiEwsNkGWw1NAyq3Nn2e369Vbszb\"}"
+    },
+    "entries": [
+        {
+            "header": {
+                "type": "intents_anchor",
+                "signature": "{[139 121 199 59 12 7 154 203 249 26 215 246 220 134 120 229 126 112 1 195 141 46 77 228 247 138 34 17 41 100 25 217 49 165 143 129 168 249 122 138 109 220 81 238 132 136 198 72 108 144 106 98 79 202 166 43 27 125 122 7 105 119 236 13]}",
+                "hash": "QmSnGaM5teJFr46zG1iHfiGdmDBUzxvwxgShxdbjzYWY2H",
+                "time": "2018-11-02 09:23:26.518441056 -0500 CDT",
+                "nextHeader": "QmPySqNE8NPa3ExGb5FpLZZXW81w2SpnZ7Y2Yzu5sjSyVQ",
+                "next": "intents_anchor: 1",
+                "entry": "QmcorF8yQDE5TCsfE1XbK49ivRq5TQ3HyPV97PowQh7AN2"
+            },
+            "content": "intents_anchor"
+        }
+    ]
+}

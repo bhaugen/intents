@@ -1,0 +1,245 @@
+bob@bob-Lemur:~/intents$ hcdev dump --chain --json
+{
+    "%dna": {
+        "header": {
+            "type": "%dna",
+            "signature": "{[194 43 250 63 239 24 101 13 19 139 161 129 205 80 102 133 194 153 247 240 247 7 51 140 25 104 8 203 230 164 162 203 107 109 19 109 201 188 5 235 6 11 155 231 220 172 160 188 58 49 209 201 29 144 242 158 53 81 148 216 133 210 58 14]}",
+            "hash": "QmdXKEzAsmSnSZnHPSy1Hzt5pu5YnhqS6mgy7ovrMQeiQ5",
+            "time": "2018-11-02 12:33:00.914355904 -0500 CDT",
+            "nextHeader": "1",
+            "next": "%dna: 1",
+            "entry": "QmZyq3r7TS6cV2sMrHDM2mHx1JGcs7zs34nTSNZPVGUyTU"
+        },
+        "content": {
+            "Version": 1,
+            "UUID": "5e2bde1a-00b2-11e8-8916-8c859027cd3b",
+            "Name": "Intents",
+            "Properties": {
+                "description": "provides an application template",
+                "language": "en"
+            },
+            "PropertiesSchema": "{\n\t\"title\": \"Properties Schema\",\n\t\"type\": \"object\",\n\t\"properties\": {\n\t\t\"description\": {\n\t\t\t\"type\": \"string\"\n\t\t},\n\t\t\"language\": {\n\t\t\t\"type\": \"string\"\n\t\t}\n\t}\n}\n",
+            "AgentIdentitySchema": "",
+            "BasedOn": {
+                "H": null
+            },
+            "RequiresVersion": 21,
+            "DHTConfig": {
+                "HashType": "sha2-256",
+                "NeighborhoodSize": 0
+            },
+            "Progenitor": {
+                "Identity": "",
+                "PubKey": null
+            },
+            "Zomes": [
+                {
+                    "Name": "Intents",
+                    "Description": "provide a sample zome",
+                    "Code": "'use strict';\n\n// EXPOSED METHODS\n\n// creates an intent entry\nfunction intentCreate (entry) {\n\n  // Commit post entry to my source chain\n  var hash = commit('intent', entry);\n\n  // On the DHT, put a link from my hash to the hash of the new post\n  var base = commit(\"intents_anchor\", \"intents_anchor\");\n  commit(\"intent_link\",{\n    Links:[\n      {Base:base, Link: hash, Tag: \"intent\"}\n    ]\n  });\n\n  // Returns the hash of the new post to the caller\n  return hash;\n}\n\n// retrieves a holoWorldEntry entry\nfunction intentRead (hash) {\n  return get(hash)\n}\n\nfunction getAllIntents () {\n    var base = commit(\"intents_anchor\", \"intents_anchor\");\n    var links = [];\n    try {\n        links = getLinks(base, 'intent', { Load: true });\n    }\n    catch (error)\n    {\n        \n    }\n    return links;\n}\n\n/**\n * Called only when your source chain is generated\n * @return {boolean} success\n */\nfunction genesis() {\n  return true;\n}\n\n// -----------------------------------------------------------------\n//  validation functions for every DHT entry change\n// -----------------------------------------------------------------\n\nfunction validateCommit (entryName, entry, header, pkg, sources) {\n  switch (entryName) {\n    case 'intent':\n      // in order for the 'commit' action to work, validateCommit (given a intent) must return true\n      // there is no special validation that we have to perform for our simple app\n      return true\n    case 'intents_anchor':\n      // in order for the 'commit' action to work, validateCommit (given a intents_anchor) must return true\n      // there is no special validation that we have to perform for our simple app\n      return true\n    case 'intent_link':\n      // in order for the 'commit' action to work, validateCommit (given a intent_link) must return true\n      // there is no special validation that we have to perform for our simple app\n      return true\n    default:\n      // invalid entry name\n      return false\n  }\n}\n\nfunction validateLink(linkEntryType, baseHash, links, pkg, sources )\n{\n  if (linkEntryType==\"intent_link\")\n    return true;\n\n  return false;\n\n}\n\nfunction validatePut (entryName, entry, header, pkg, sources) {\n  switch (entryName) {\n    case 'intent':\n      return true\n    default:\n      // invalid entry name\n      return true\n  }\n}\n\nfunction validateMod (entryName, entry, header, replaces, pkg, sources) {\n  switch (entryName) {\n    case \"sampleEntry\":\n      return false;\n    default:\n      // invalid entry name\n      return false;\n  }\n}\n\nfunction validateDel (entryName,hash, pkg, sources) {\n  switch (entryName) {\n    case \"sampleEntry\":\n      return false;\n    default:\n      // invalid entry name\n      return false;\n  }\n}\n\nfunction validatePutPkg (entryName) {\n  return null;\n}\nfunction validateModPkg (entryName) {\n  return null;\n}\nfunction validateDelPkg (entryName) {\n  return null;\n}\n",
+                    "Entries": [
+                        {
+                            "Name": "intent",
+                            "DataFormat": "json",
+                            "Sharing": "public",
+                            "Schema": ""
+                        },
+                        {
+                            "Name": "intent_link",
+                            "DataFormat": "links",
+                            "Sharing": "",
+                            "Schema": ""
+                        },
+                        {
+                            "Name": "intents_anchor",
+                            "DataFormat": "string",
+                            "Sharing": "public",
+                            "Schema": ""
+                        }
+                    ],
+                    "RibosomeType": "js",
+                    "Functions": [
+                        {
+                            "Name": "intentCreate",
+                            "CallingType": "json",
+                            "Exposure": "public"
+                        },
+                        {
+                            "Name": "intentRead",
+                            "CallingType": "json",
+                            "Exposure": "public"
+                        },
+                        {
+                            "Name": "getAllIntents",
+                            "CallingType": "json",
+                            "Exposure": "public"
+                        }
+                    ],
+                    "BridgeFuncs": null,
+                    "BridgeTo": {
+                        "H": null
+                    },
+                    "Config": null
+                }
+            ]
+        }
+    },
+    "%agent": {
+        "header": {
+            "type": "%agent",
+            "signature": "{[71 6 4 66 76 152 147 139 191 194 125 208 61 121 195 211 84 131 49 248 194 39 189 104 135 232 131 200 118 231 137 117 113 6 58 168 26 128 78 123 182 84 63 80 87 63 249 211 86 167 175 60 60 98 56 226 233 43 148 222 142 247 229 6]}",
+            "hash": "QmYYV8zDojZTrB9FPK724tn3fbjyfzsT7LnkJbyEpt3u24",
+            "time": "2018-11-02 12:33:00.917417156 -0500 CDT",
+            "nextHeader": "QmdXKEzAsmSnSZnHPSy1Hzt5pu5YnhqS6mgy7ovrMQeiQ5",
+            "next": "%agent: 1",
+            "entry": "QmPZuS6B5D5B9WYu8Yi3xLpnZuZvUBKkUCVNpXCYwtpyXD"
+        },
+        "content": "{\"Identity\":\"bob@bob-Lemur\",\"Revocation\":\"\",\"PublicKey\":\"4XTTMAk7fNogW7DQKYc8bDiEwsNkGWw1NAyq3Nn2e369Vbszb\"}"
+    },
+    "entries": [
+        {
+            "header": {
+                "type": "intent",
+                "signature": "{[142 29 37 57 4 38 50 198 244 245 72 199 169 12 70 249 76 242 123 126 202 81 137 217 47 172 48 45 193 28 228 126 74 133 46 124 143 7 27 166 72 68 175 36 143 243 98 174 166 156 199 253 110 55 83 223 27 17 227 163 94 24 220 9]}",
+                "hash": "QmbWprfjEs1gWSGjSNrxbU6JAY9hz7yR5AQtMUWnbSD8o8",
+                "time": "2018-11-02 12:33:32.131906426 -0500 CDT",
+                "nextHeader": "QmYYV8zDojZTrB9FPK724tn3fbjyfzsT7LnkJbyEpt3u24",
+                "next": "intent: 1",
+                "entry": "Qmf7gkFRi1x9zrKoxNqeVcZbUMi6axxmGaExpCFsHidMQH"
+            },
+            "content": "{\"content\":\"need 1\",\"timestamp\":1541180012}"
+        },
+        {
+            "header": {
+                "type": "intents_anchor",
+                "signature": "{[139 121 199 59 12 7 154 203 249 26 215 246 220 134 120 229 126 112 1 195 141 46 77 228 247 138 34 17 41 100 25 217 49 165 143 129 168 249 122 138 109 220 81 238 132 136 198 72 108 144 106 98 79 202 166 43 27 125 122 7 105 119 236 13]}",
+                "hash": "QmbJNWVxCjJHw1fJMtefCoSBWjyHWaDB7mTBE4syUoeppd",
+                "time": "2018-11-02 12:33:32.162217431 -0500 CDT",
+                "nextHeader": "QmbWprfjEs1gWSGjSNrxbU6JAY9hz7yR5AQtMUWnbSD8o8",
+                "next": "intents_anchor: 1",
+                "entry": "QmcorF8yQDE5TCsfE1XbK49ivRq5TQ3HyPV97PowQh7AN2"
+            },
+            "content": "intents_anchor"
+        },
+        {
+            "header": {
+                "type": "intent_link",
+                "signature": "{[86 80 218 98 176 139 195 203 154 80 63 159 93 217 215 122 62 93 167 253 136 101 107 212 179 50 238 218 94 77 251 15 19 189 20 166 196 181 213 22 129 64 132 77 150 191 57 0 193 117 14 115 28 105 185 173 89 155 140 116 204 158 69 2]}",
+                "hash": "QmbpBfqBtq2aDyo887Man4bmttuYK9bRo5W47TYVnRdbWn",
+                "time": "2018-11-02 12:33:32.189890498 -0500 CDT",
+                "nextHeader": "QmbJNWVxCjJHw1fJMtefCoSBWjyHWaDB7mTBE4syUoeppd",
+                "next": "intent_link: 1",
+                "entry": "QmZt9gp3bkShTMUUPm1PEnczjVGqpUTByN3ktQfAxoHR6X"
+            },
+            "content": "{\"Links\":[{\"Base\":\"QmcorF8yQDE5TCsfE1XbK49ivRq5TQ3HyPV97PowQh7AN2\",\"Link\":\"Qmf7gkFRi1x9zrKoxNqeVcZbUMi6axxmGaExpCFsHidMQH\",\"Tag\":\"intent\"}]}"
+        },
+        {
+            "header": {
+                "type": "intent",
+                "signature": "{[121 105 138 23 233 136 9 225 188 168 148 44 162 132 209 209 153 62 172 174 120 158 88 136 156 19 163 91 204 87 209 192 194 126 208 40 118 210 125 197 74 85 71 139 157 17 184 194 49 178 171 14 219 47 224 38 184 229 149 28 86 118 183 10]}",
+                "hash": "QmauSypoxv16RwGgVdnLAzHQR8X62gMBxTXGVrGSDBqp8a",
+                "time": "2018-11-02 12:33:42.249799738 -0500 CDT",
+                "nextHeader": "QmbpBfqBtq2aDyo887Man4bmttuYK9bRo5W47TYVnRdbWn",
+                "next": "intent: QmbWprfjEs1gWSGjSNrxbU6JAY9hz7yR5AQtMUWnbSD8o8",
+                "entry": "QmQPMR2tVYzUfqZditeJQuR9CaC8bBfJcAYRXvMtCzaHuL"
+            },
+            "content": "{\"content\":\"offer 1\",\"timestamp\":1541180022}"
+        },
+        {
+            "header": {
+                "type": "intents_anchor",
+                "signature": "{[139 121 199 59 12 7 154 203 249 26 215 246 220 134 120 229 126 112 1 195 141 46 77 228 247 138 34 17 41 100 25 217 49 165 143 129 168 249 122 138 109 220 81 238 132 136 198 72 108 144 106 98 79 202 166 43 27 125 122 7 105 119 236 13]}",
+                "hash": "QmbLuHdCbZPpXCth3Rr5yhBL8DGurE8BXY3dR8aPBXKAUD",
+                "time": "2018-11-02 12:33:42.266378934 -0500 CDT",
+                "nextHeader": "QmauSypoxv16RwGgVdnLAzHQR8X62gMBxTXGVrGSDBqp8a",
+                "next": "intents_anchor: QmbJNWVxCjJHw1fJMtefCoSBWjyHWaDB7mTBE4syUoeppd",
+                "entry": "QmcorF8yQDE5TCsfE1XbK49ivRq5TQ3HyPV97PowQh7AN2"
+            },
+            "content": "intents_anchor"
+        },
+        {
+            "header": {
+                "type": "intent_link",
+                "signature": "{[165 149 149 23 203 90 61 197 164 24 10 195 138 77 86 8 240 174 208 251 207 17 105 60 63 121 114 84 67 187 224 250 65 134 247 1 5 14 129 136 23 14 86 245 166 246 11 253 240 43 194 161 217 75 133 194 4 227 26 43 229 134 121 11]}",
+                "hash": "QmePCEHzpeuTX2QptEcHwmxkfbMBfoZah531FxZKePZ2Q9",
+                "time": "2018-11-02 12:33:42.273199445 -0500 CDT",
+                "nextHeader": "QmbLuHdCbZPpXCth3Rr5yhBL8DGurE8BXY3dR8aPBXKAUD",
+                "next": "intent_link: QmbpBfqBtq2aDyo887Man4bmttuYK9bRo5W47TYVnRdbWn",
+                "entry": "QmNSbMNAL2DkYgFWSNb9BnXtk8KCG7ABn1KZFcFU1M3z7D"
+            },
+            "content": "{\"Links\":[{\"Base\":\"QmcorF8yQDE5TCsfE1XbK49ivRq5TQ3HyPV97PowQh7AN2\",\"Link\":\"QmQPMR2tVYzUfqZditeJQuR9CaC8bBfJcAYRXvMtCzaHuL\",\"Tag\":\"intent\"}]}"
+        },
+        {
+            "header": {
+                "type": "intent",
+                "signature": "{[203 162 62 40 233 64 191 125 49 0 163 54 63 139 46 53 172 35 178 238 206 172 169 211 228 231 79 45 194 7 154 52 26 54 48 64 104 208 84 219 91 225 32 83 196 146 191 191 190 27 186 198 157 173 189 115 83 15 242 8 47 107 174 1]}",
+                "hash": "QmaUQz4KpoEcqJTgxCrRce5Vtj4vmvqwc59zhzNiPj8gEo",
+                "time": "2018-11-02 12:33:50.517575149 -0500 CDT",
+                "nextHeader": "QmePCEHzpeuTX2QptEcHwmxkfbMBfoZah531FxZKePZ2Q9",
+                "next": "intent: QmauSypoxv16RwGgVdnLAzHQR8X62gMBxTXGVrGSDBqp8a",
+                "entry": "QmSztDH7oFT8XmXnxfRumZbdhXn6HxVqfK4HU57xztCDZU"
+            },
+            "content": "{\"content\":\"need 2\",\"timestamp\":1541180030}"
+        },
+        {
+            "header": {
+                "type": "intents_anchor",
+                "signature": "{[139 121 199 59 12 7 154 203 249 26 215 246 220 134 120 229 126 112 1 195 141 46 77 228 247 138 34 17 41 100 25 217 49 165 143 129 168 249 122 138 109 220 81 238 132 136 198 72 108 144 106 98 79 202 166 43 27 125 122 7 105 119 236 13]}",
+                "hash": "QmNmVaCTi8EBAzhLhthk3eQwCdEndEaLZcsyzqFhYM7WsF",
+                "time": "2018-11-02 12:33:50.546536653 -0500 CDT",
+                "nextHeader": "QmaUQz4KpoEcqJTgxCrRce5Vtj4vmvqwc59zhzNiPj8gEo",
+                "next": "intents_anchor: QmbLuHdCbZPpXCth3Rr5yhBL8DGurE8BXY3dR8aPBXKAUD",
+                "entry": "QmcorF8yQDE5TCsfE1XbK49ivRq5TQ3HyPV97PowQh7AN2"
+            },
+            "content": "intents_anchor"
+        },
+        {
+            "header": {
+                "type": "intent_link",
+                "signature": "{[228 186 9 87 55 237 247 116 20 57 175 19 9 50 232 183 224 218 182 236 6 182 173 142 190 136 100 98 230 226 14 146 40 163 164 247 217 140 44 154 6 149 181 189 250 129 17 206 194 179 211 185 111 92 190 177 155 74 104 135 29 156 243 13]}",
+                "hash": "Qme9JqLiBDoyAcob8xrAfXiCX7i596sapCFU3KX9YuesaT",
+                "time": "2018-11-02 12:33:50.568106695 -0500 CDT",
+                "nextHeader": "QmNmVaCTi8EBAzhLhthk3eQwCdEndEaLZcsyzqFhYM7WsF",
+                "next": "intent_link: QmePCEHzpeuTX2QptEcHwmxkfbMBfoZah531FxZKePZ2Q9",
+                "entry": "QmThVwTQfSk7AHcKy54BDCHMfNyUXds6wwdDZdAsom2NBz"
+            },
+            "content": "{\"Links\":[{\"Base\":\"QmcorF8yQDE5TCsfE1XbK49ivRq5TQ3HyPV97PowQh7AN2\",\"Link\":\"QmSztDH7oFT8XmXnxfRumZbdhXn6HxVqfK4HU57xztCDZU\",\"Tag\":\"intent\"}]}"
+        },
+        {
+            "header": {
+                "type": "intent",
+                "signature": "{[252 35 182 42 253 191 33 224 86 56 108 26 196 246 8 116 244 58 130 44 23 42 20 170 154 47 122 85 248 27 146 2 88 250 196 36 250 100 222 16 134 150 22 245 211 245 245 178 116 28 42 16 180 145 87 254 218 212 204 174 206 80 154 14]}",
+                "hash": "QmajzbTcPKSnsnQcA39dC7XxL3hfyDKFcrEBaK32grMAfj",
+                "time": "2018-11-02 12:33:55.989021786 -0500 CDT",
+                "nextHeader": "Qme9JqLiBDoyAcob8xrAfXiCX7i596sapCFU3KX9YuesaT",
+                "next": "intent: QmaUQz4KpoEcqJTgxCrRce5Vtj4vmvqwc59zhzNiPj8gEo",
+                "entry": "QmXY2uCnhWZjsRY4S1HAo2VYL2b8uYV5RuMdcJR2FWAS7p"
+            },
+            "content": "{\"content\":\"offer 2\",\"timestamp\":1541180035}"
+        },
+        {
+            "header": {
+                "type": "intents_anchor",
+                "signature": "{[139 121 199 59 12 7 154 203 249 26 215 246 220 134 120 229 126 112 1 195 141 46 77 228 247 138 34 17 41 100 25 217 49 165 143 129 168 249 122 138 109 220 81 238 132 136 198 72 108 144 106 98 79 202 166 43 27 125 122 7 105 119 236 13]}",
+                "hash": "QmUS2Jxpabt1JQ3URMrtdvempiaULTAYfLucCz4bsYu39C",
+                "time": "2018-11-02 12:33:56.01826079 -0500 CDT",
+                "nextHeader": "QmajzbTcPKSnsnQcA39dC7XxL3hfyDKFcrEBaK32grMAfj",
+                "next": "intents_anchor: QmNmVaCTi8EBAzhLhthk3eQwCdEndEaLZcsyzqFhYM7WsF",
+                "entry": "QmcorF8yQDE5TCsfE1XbK49ivRq5TQ3HyPV97PowQh7AN2"
+            },
+            "content": "intents_anchor"
+        },
+        {
+            "header": {
+                "type": "intent_link",
+                "signature": "{[41 5 130 43 19 207 105 19 218 5 101 57 45 67 127 25 76 53 87 241 126 236 170 143 186 247 56 253 15 4 158 81 21 54 127 1 86 126 126 75 152 167 134 123 147 161 22 229 124 164 173 112 237 51 159 99 183 51 64 207 181 223 66 5]}",
+                "hash": "QmRHnrphNs3JYTkmVskZDvDqV4DTs2KRGdDgHsA7pFUDi7",
+                "time": "2018-11-02 12:33:56.041271234 -0500 CDT",
+                "nextHeader": "QmUS2Jxpabt1JQ3URMrtdvempiaULTAYfLucCz4bsYu39C",
+                "next": "intent_link: Qme9JqLiBDoyAcob8xrAfXiCX7i596sapCFU3KX9YuesaT",
+                "entry": "QmRmGAD141GSodfbySuJBnPW1tUQk2mYe58zQi3jd5PWeK"
+            },
+            "content": "{\"Links\":[{\"Base\":\"QmcorF8yQDE5TCsfE1XbK49ivRq5TQ3HyPV97PowQh7AN2\",\"Link\":\"QmXY2uCnhWZjsRY4S1HAo2VYL2b8uYV5RuMdcJR2FWAS7p\",\"Tag\":\"intent\"}]}"
+        }
+    ]
+}
